@@ -4,15 +4,15 @@ This project job is done to process a TSV file and perform extraction, transform
 
 ## Project Design
 
-The design of this project is that is should fast and easy to deploy and run. Below is a description of how the application should be deployment ready.
+The design of this project is that it should be fast and easy to deploy and run. Below is a description of how the application should be deployment ready.
 
 ![Screenshot](https://github.com/Thelin90/PySparkDocker/blob/master/deployment.png)
 
-Microservices is an architectural style that structures an application as a collection of loosely coupled services. It which implement business capabilities such as continuous delivery/deployment of scale.
+Microservices is an architectural style that structures an application as a collection of loosely coupled services. Therefore enrich business capabilities, such as continuous delivery/deployment of scale.
 
 ## Data Processing
 
-Apache Spark is tool used within this project to do the data processing. Spark is a unified analytic engine for large-scale data processing. It is a general distributed in-memory computing framework implemented in scala. Spark is a data-processing tool that operates on those distributed data collections. Hence it does not do distributed storage. Spark is also much faster than hadoop. Apache Spark and Hadoop have different purposes but works good together. A high level overview of Apache Spark below: 
+Apache Spark is the chosen tool used within this project. Spark is quick and very responsive tool to perform data processing with. It provides an analytic engine for large-scale data processing. It is a general distributed in-memory computing framework implemented in scala. Hence spark operates on distributed data collections. However it does not do distributed storage. Spark is proven to be much faster than the popular Apache Hadoop framework. Apache Spark and Hadoop have different purposes but works good together. A high level overview of Apache Spark below: 
 
 ![Screenshot](https://github.com/Thelin90/PySparkDocker/blob/master/spark.png)
 
@@ -30,11 +30,11 @@ This project spefically take advantage of the dataframes.
 It has derived from the resilient distributed datasets concept. Dataframes will provide a higher level of abstraction. Which implicitly allow a query language way of typing to manipulate data. The abstraction represents data and a schema. Which enable better interaction with front end applications.
 
 ## Dataset
-The dataset has the following values divided by their tab: field header (date, time, user_id, url, IP, user_agent_string). See attached source file input_data.
+The dataset has the (default) values divided by tab in the given dataset provided (input data): field header (date, time, user_id, url, IP, user_agent_string). See attached source file input_data.
 
 ## Setup
 
-Directly from the source code:
+Clone directly from the source code:
 
 ```bash
 git clone https://github.com/Thelin90/PySparkDocker.git
@@ -42,14 +42,14 @@ git clone https://github.com/Thelin90/PySparkDocker.git
 
 Docker needs to be installed on the machine. It can also run locally without docker.
 
-## Requirements
+### Requirements
 
 * Docker environment
 * Python 2.7.x
 * PySpark 2.3.0
 
 
-## Manual Run
+### Manual Run
 
 Run the script manually without using docker.
 
@@ -57,7 +57,7 @@ Run the script manually without using docker.
 python etl.py
 ```
 
-## Run ETL Docker
+### Run ETL Docker
 
 The provided Dockerfile will run the script with a cronjob set to 18:00 every Sunday, every week.
 
