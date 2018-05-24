@@ -1,0 +1,10 @@
+findspark==1.2.0
+httpagentparser==1.8.1
+numpy==1.14.3
+pandas==0.23.0
+py4j==0.10.6
+pygeoip==0.3.2
+pyspark==2.3.0
+python-dateutil==2.7.3
+pytz==2018.4
+six==1.11.0
