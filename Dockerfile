@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y openjdk-8-jdk && apt-get install -y ant
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 RUN export JAVA_HOME
 
-# Set workspace inside cron.d will not work otherwise
+# Set workspace
 WORKDIR /etc/app
 
 # Add all the project files to the
