@@ -59,8 +59,6 @@ python etl.py
 
 ### Run ETL Docker
 
-The provided Dockerfile will run the script with a cronjob set to 18:00 every Sunday, every week.
-
 ```bash
 docker build -t etl-yieldify .
 docker run etl-yieldify
