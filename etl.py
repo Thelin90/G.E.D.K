@@ -1,8 +1,9 @@
 #!/usr/bin/env python
+
 """
-@author: Simon Thelin
-@version: 0.0.1
+Python script to initiate and perform the ETL process
 """
+
 import pyspark
 import httpagentparser
 from pyspark.sql.functions import *
@@ -13,82 +14,97 @@ from geoip import ipquery
 import os
 
 
-def splitCol(dataframe, split, colNames):
+def splitCol(_dataframe, _split, _colNames):
+    """Simply creates new columns when needed
+
+    Args:
+        _dataframe: The dataframe that needs to split columns
+        _split: The value to split on, ex: "-", ",", "*"
+        _colNames: The new names for the new columns
+
+    Returns:
+
     """
-    Simply creates new columns when needed
-    :param dataframe:
-    :param split:
-    :param colNames:
-    :return:
-    """
-    split_col = pyspark.sql.functions.split(dataframe[colNames[0]], split)
-    dataframe = dataframe.withColumn(colNames[1], split_col.getItem(0))
-    dataframe = dataframe.withColumn(colNames[2], split_col.getItem(1))
-    return dataframe
+    split_col = pyspark.sql.functions.split(_dataframe[_colNames[0]], _split)
+    _dataframe = _dataframe.withColumn(_colNames[1], split_col.getItem(0))
+    _dataframe = _dataframe.withColumn(_colNames[2], split_col.getItem(1))
+    return _dataframe
 
 
-def getCountryCity(list):
+def getCountryCity(ip_list):
+    """Makes a call to ipquery inside the geoip.py to retreive the country and city to a certain IP
+
+    Args:
+        ip_list: the list representing all the dataframe column values
+
+    Returns: A list of the result from the ipquery ["country-city", "country-city", ...]
+
     """
-    Makes a call to ipquery inside the geoip.py to retreive the country and city to a certain IP
-    :param list: the list representing all the dataframe column values
-    :return:
-    """
-    atrlist = []
+    attributes = []
     """ Doing transformation from IP to find Country, City... """
-    for i in list:
+    for i in ip_list:
         _ips = i.ip1
         try:
-            atrlist.append(ipquery(_ips))
-        except:
-            atrlist.append("NotTraceable-NotTraceable")
+            attributes.append(ipquery(_ips))
+        except AttributeError:
+            attributes.append("NotTraceable-NotTraceable")
 
-    return atrlist
+    return attributes
 
 
 def getOsBrowser(value):
-    """
-    Calls the httpagentparser and retrieves the os and browser information
-    :param value: each column value of user_agent_string
-    :return: the browser and os as a string
+    """Calls the httpagentparser and retrieves the os and browser information
+
+    Args:
+        value: Each column value of user_agent_string
+
+    Returns: The browser and os as a string
+
     """
     return str(httpagentparser.simple_detect(value)[0] + "-" + httpagentparser.simple_detect(value)[1])
 
 
 def load(_df):
-    """
-    Load function to print the result and to save the dataframe for api calls
-    :param _df: the final dataframe
-    :return: nothing
+    """Load function to print the result and to save the dataframe for api calls
+
+    Args:
+        _df: The final dataframe
+
+    Returns: Nothing
+
     """
 
     """ Peform load process """
 
     print("Top 5 cities based on number of events")
-    _df.groupBy("country").count().orderBy("count", ascending=False)\
+    _df.groupBy("country").count().orderBy("count", ascending=False) \
         .show(5)
 
     print("Top 5 cities based on number of events")
-    _df.groupBy("city").count().orderBy("count", ascending=False)\
+    _df.groupBy("city").count().orderBy("count", ascending=False) \
         .show(5)
 
     print("Top 5 Browsers based on number of unique users")
 
-    _df.groupBy("browser").agg(countDistinct("user_id"))\
-        .orderBy("count(DISTINCT user_id)", ascending=False)\
+    _df.groupBy("browser").agg(countDistinct("user_id")) \
+        .orderBy("count(DISTINCT user_id)", ascending=False) \
         .show(5)
 
     print("Top 5 Operating systems based on number of unique users")
-    _df.groupBy("os").agg(countDistinct("user_id"))\
-        .orderBy("count(DISTINCT user_id)", ascending=False)\
+    _df.groupBy("os").agg(countDistinct("user_id")) \
+        .orderBy("count(DISTINCT user_id)", ascending=False) \
         .show(5)
 
 
-def transform(_df, spark):
-    """
-    This function handles the ransformation of the dataset (biggest part)
-    :param _df: Initial, unhandled dataframe straight from extraction
-    :param spark: sparksession
-    :return: final and structured dataframe
+def transform(_df, _spark):
+    """This function handles the ransformation of the dataset (biggest part)
+
+    Args:
+        _df: Initial, unhandled dataframe straight from extraction
+        _spark: sparksession
+
+    Returns: Final and structured dataframe
+
     """
 
     """ Transformation in progress... """
@@ -107,8 +123,8 @@ def transform(_df, spark):
 
     """ Cleaning Os Browser result """
 
-    _df = splitCol(_df, "-", ["getOsBrowser", "os", "browser"])\
-        .drop("getOsBrowser")\
+    _df = splitCol(_df, "-", ["getOsBrowser", "os", "browser"]) \
+        .drop("getOsBrowser") \
         .drop("user_agent_string")
 
     """ Cleaning IP adresses """
@@ -137,7 +153,7 @@ def transform(_df, spark):
     ip1 = getCountryCity(ip1)
 
     """ Create dataframe for countries and cities of the first ip column """
-    cs1 = spark.createDataFrame(
+    cs1 = _spark.createDataFrame(
         ip1,
         StringType()) \
         .withColumnRenamed("value", "location") \
@@ -147,26 +163,29 @@ def transform(_df, spark):
 
     """ Merge countries and cities to org dataframes """
 
-    df = _df.join(ip1, _df.eventID == ip1.id)
-    df = df.drop("id").drop("ip1").drop("ip2")
-    df = df.orderBy("eventID", ascending=True)
-    df = df.select("eventID", "timestamp", "user_id", "url", "os", "browser", "country", "city")
+    ret_df = _df.join(ip1, _df.eventID == ip1.id)
+    ret_df = ret_df.drop("id").drop("ip1").drop("ip2")
+    ret_df = ret_df.orderBy("eventID", ascending=True)
+    ret_df = ret_df.select("eventID", "timestamp", "user_id", "url", "os", "browser", "country", "city")
 
     """ Return the loaded dataframe, ready to be used for examination """
 
-    return df
+    return ret_df
 
 
 def extract(_spark):
-    """
-    Extracting the tsv file into a DataFrame
-    :param _spark:
-    :return: inital dataframe before transform
+    """Extracting the tsv file into a DataFrame
+
+    Args:
+        _spark: The actual spark session
+
+    Returns: Initial dataframe before transform
+
     """
     cwd = os.getcwd()
     """ Initial read of the given TSV file """
     _df = _spark.read.csv(
-        cwd+"/input_data",
+        cwd + "/input_data",
         sep="\t",
         encoding='utf-8'
     ).toDF("date", "time", "user_id", "url", "ip", "user_agent_string")
@@ -175,7 +194,7 @@ def extract(_spark):
 
 
 if __name__ == "__main__":
-    """ Initail setup of spark project """
+    """ Initial setup of spark project """
     warehouse_location = abspath('spark-warehouse')
     spark = SparkSession \
         .builder \
@@ -206,5 +225,6 @@ if __name__ == "__main__":
     load(df)
 
     print("Spark application ends")
+
     """ Stop spark application """
     spark.stop()
