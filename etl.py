@@ -31,23 +31,23 @@ def splitCol(_dataframe, _split, _colNames):
     return _dataframe
 
 
-def getCountryCity(ip_list):
+def getCountryCity(_ip_list):
     """Makes a call to ipquery inside the geoip.py to retreive the country and city to a certain IP
 
     Args:
-        ip_list: the list representing all the dataframe column values
+        _ip_list: the list representing all the dataframe column values
 
     Returns: A list of the result from the ipquery ["country-city", "country-city", ...]
 
     """
     attributes = []
     """ Doing transformation from IP to find Country, City... """
-    for i in ip_list:
-        _ips = i.ip1
+    for i in _ip_list:
+        ip = i.ip1
         try:
-            attributes.append(ipquery(_ips))
-        except AttributeError:
-            attributes.append("NotTraceable-NotTraceable")
+            attributes.append(ipquery(ip))
+        except Exception as exception:
+            raise exception
 
     return attributes
 
@@ -76,7 +76,7 @@ def load(_df):
 
     """ Peform load process """
 
-    print("Top 5 cities based on number of events")
+    print("Top 5 countries based on number of events")
     _df.groupBy("country").count().orderBy("count", ascending=False) \
         .show(5)
 
@@ -167,6 +167,10 @@ def transform(_df, _spark):
     ret_df = ret_df.drop("id").drop("ip1").drop("ip2")
     ret_df = ret_df.orderBy("eventID", ascending=True)
     ret_df = ret_df.select("eventID", "timestamp", "user_id", "url", "os", "browser", "country", "city")
+
+    """ Remove all null values from country """
+
+    ret_df = ret_df.filter(ret_df.country.isNotNull())
 
     """ Return the loaded dataframe, ready to be used for examination """
 
