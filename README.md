@@ -8,7 +8,7 @@ This project job is done to process a TSV file and perform extraction, transform
 
 The design of this project is that it should be fast and easy to deploy and run. Below is a description of how the application should be deployment ready.
 
-![Screenshot](https://github.com/Thelin90/PySparkDocker/blob/master/deployment.png)
+![Screenshot](https://github.com/Thelin90/PySparkDocker/blob/master/images/deployment.png)
 
 Microservices is an architectural style that structures an application as a collection of loosely coupled services. Therefore enrich business capabilities, such as continuous delivery/deployment of scale.
 
@@ -16,11 +16,11 @@ Microservices is an architectural style that structures an application as a coll
 
 Apache Spark is the chosen tool used within this project. Spark is quick and very responsive tool to perform data processing with. It provides an analytic engine for large-scale data processing. It is a general distributed in-memory computing framework implemented in scala. Hence spark operates on distributed data collections. However it does not do distributed storage. Spark is proven to be much faster than the popular Apache Hadoop framework. Apache Spark and Hadoop have different purposes but works good together. A high level overview of Apache Spark below: 
 
-![Screenshot](https://github.com/Thelin90/PySparkDocker/blob/master/spark.png)
+![Screenshot](https://github.com/Thelin90/PySparkDocker/blob/master/images/spark.png)
 
 Hadoop is essentially a distributed data infrastructure. It provides distributes big data collections across multiple nodes within a cluster of commodity servers. A high level overview of Apache Hadoop below: 
 
-![Screenshot](https://github.com/Thelin90/PySparkDocker/blob/master/hadoop.png)
+![Screenshot](https://github.com/Thelin90/PySparkDocker/blob/master/images/hadoop.png)
 
 
 ## PySpark
