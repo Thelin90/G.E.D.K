@@ -1,5 +1,7 @@
 # Overview
 
+`Note: This project is for Linux environments, specifically Ubuntu`
+
 This project job is done to process a TSV file and perform extraction, transformation and loading (ETL).
 
 ## Project Design
@@ -45,23 +47,74 @@ Docker needs to be installed on the machine. It can also run locally without doc
 ### Requirements
 
 * Docker environment
-* Python 2.7.x
-* PySpark 2.3.0
+* Python 3.6
+* Java ^8
+* Spark ^2.3.x `(mininum 2.3.0)`
 
+Assuming that Python, Docker and Java is already setup.
+
+### Setup Apache-Spark
+
+Start with downloading Spark (note that depending on your IDE, you need to specify your Spark location):
+
+- https://spark.apache.org/downloads.html
+
+Set your SPARK_HOME in `.bashrc`
+```bash
+SPARK_HOME='path-to-spark'
+```
+
+Then source the file
+
+```bash
+source ~/.bashrc
+```
+
+#### PyCharm Example
+
+Mark as source:
+
+```bash
+File -> Settings -> Project Structure -> add root content '+' -> 'path-to-spark'
+```
+
+Set environment variables:
+
+```bash
+Run -> Edit Configuration -> Environment Variables -> add new environment variables
+```
+```bash
+NAME				VALUE
+PYSPARK_PYTHON			'path-to-python'
+PYSPARK_DRIVER_PYTHON		'path-to-python'
+```
+
+### Testing
+
+- TODO:
 
 ### Manual Run
+
+Remember to set PYTHONPATH in `~/.bashrc`
+
+```bash
+PYTHONPATH=path-to-proj/PySparkDocker/src/
+```
+
+Then `source ~/.bashrc`
+
 
 Run the script manually without using docker.
 
 ```bash
-python etl.py
+spark-submit src/etl.py
 ```
 
 ### Run ETL Docker
 
 ```bash
-docker build -t etl-yieldify .
-docker run etl-yieldify
+docker build -t etl-cities-countries .
+docker run etl-cities-countries
 ```
 
 ## Result
@@ -72,8 +125,10 @@ docker run etl-yieldify
 * Top 5 Operating systems based on number of unique users.
 
 ```bash
+date and time column is becomming one timestamp...
+The user_agent_string is becomming os and browser...
+Converting IP adress to city and country... 
 Printing Transformed Dataframe Schema
-root
  |-- eventID: long (nullable = false)
  |-- timestamp: timestamp (nullable = true)
  |-- user_id: string (nullable = true)
@@ -88,11 +143,11 @@ Top 5 countries based on number of events
 +--------------+------+
 |       country| count|
 +--------------+------+
-|United Kingdom|128901|
-|       Ireland| 16713|
-|        Sweden| 11516|
-|        Norway|  6386|
-|       Germany|  1833|
+|United Kingdom|135831|
+|       Ireland| 18522|
+|        Sweden| 12143|
+|        Norway|  6908|
+|   Netherlands|  2131|
 +--------------+------+
 only showing top 5 rows
 
@@ -100,11 +155,11 @@ Top 5 cities based on number of events
 +------------+-----+
 |        city|count|
 +------------+-----+
-|NotTraceable|14443|
-|      Dublin| 5402|
-|      London| 4645|
-|  Manchester| 3326|
-|     Bristol| 2718|
+|NotTraceable|15336|
+|      Dublin| 5750|
+|      London| 4827|
+|  Manchester| 3736|
+|     Bristol| 2801|
 +------------+-----+
 only showing top 5 rows
 
@@ -112,11 +167,11 @@ Top 5 Browsers based on number of unique users
 +--------------------+-----------------------+
 |             browser|count(DISTINCT user_id)|
 +--------------------+-----------------------+
-|          Safari 7.0|                  25644|
-|          Safari 8.0|                  16971|
-|Chrome 37.0.2062.124|                   4866|
-|        Safari 7.0.6|                   2526|
-|          Safari 7.1|                   2358|
+|          Safari 7.0|                  27117|
+|          Safari 8.0|                  17941|
+|Chrome 37.0.2062.124|                   5054|
+|        Safari 7.0.6|                   2804|
+|          Safari 7.1|                   2486|
 +--------------------+-----------------------+
 only showing top 5 rows
 
@@ -124,13 +179,15 @@ Top 5 Operating systems based on number of unique users
 +----------------+-----------------------+
 |              os|count(DISTINCT user_id)|
 +----------------+-----------------------+
-|  IPad iOS 8.0.2|                  10428|
-|  IPad iOS 7.1.2|                  10116|
-|       Windows 7|                   6525|
-|iPhone iOS 8.0.2|                   4477|
-|iPhone iOS 7.1.2|                   4351|
+|  IPad iOS 8.0.2|                  11126|
+|  IPad iOS 7.1.2|                  10786|
+|       Windows 7|                   6722|
+|iPhone iOS 8.0.2|                   4651|
+|iPhone iOS 7.1.2|                   4496|
 +----------------+-----------------------+
 only showing top 5 rows
+
+Spark application ends
 ```
 
 ## License

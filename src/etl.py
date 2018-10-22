@@ -4,14 +4,15 @@
 Python script to initiate and perform the ETL process
 """
 
+import os
 import pyspark
 import httpagentparser
+from pyspark.sql.functions import struct
 from pyspark.sql.functions import *
 from os.path import abspath
 from pyspark.sql import SparkSession
 from pyspark.sql.types import TimestampType, StringType
 from geoip import ipquery
-import os
 
 
 def splitCol(_dataframe, _split, _colNames):
@@ -29,27 +30,6 @@ def splitCol(_dataframe, _split, _colNames):
     _dataframe = _dataframe.withColumn(_colNames[1], split_col.getItem(0))
     _dataframe = _dataframe.withColumn(_colNames[2], split_col.getItem(1))
     return _dataframe
-
-
-def getCountryCity(_ip_list):
-    """Makes a call to ipquery inside the geoip.py to retreive the country and city to a certain IP
-
-    Args:
-        _ip_list: the list representing all the dataframe column values
-
-    Returns: A list of the result from the ipquery ["country-city", "country-city", ...]
-
-    """
-    attributes = []
-    """ Doing transformation from IP to find Country, City... """
-    for i in _ip_list:
-        ip = i.ip1
-        try:
-            attributes.append(ipquery(ip))
-        except Exception as exception:
-            raise exception
-
-    return attributes
 
 
 def getOsBrowser(value):
@@ -147,24 +127,23 @@ def transform(_df, _spark):
     """
 
     print("Converting IP adress to city and country... ")
-    ip1 = _df.select("ip1").collect()
+    countrycityinfo = udf(ipquery, StringType())
 
     """ Get the countries and cities from the IP columns """
-    ip1 = getCountryCity(ip1)
+    _df = _df.withColumn("ipquery", countrycityinfo(_df.ip1))
 
-    """ Create dataframe for countries and cities of the first ip column """
-    cs1 = _spark.createDataFrame(
-        ip1,
-        StringType()) \
-        .withColumnRenamed("value", "location") \
-        .withColumn("id", monotonically_increasing_id())
+    """ Modify ip dataframe for countries and cities of the first ip column """
+    _ip = splitCol(_df, "-", ["ipquery", "country", "city"]).drop("ipquery")\
+        .drop("eventID").drop("timestamp").drop("user_id").drop("url")\
+        .drop("os").drop("browser").drop("ip1").drop("ip2")
 
-    ip1 = splitCol(cs1, "-", ["location", "country", "city"]).drop("location")
+    """ create a monotonically increasing id """
+    _ip = _ip.withColumn("id", monotonically_increasing_id())
 
     """ Merge countries and cities to org dataframes """
 
-    ret_df = _df.join(ip1, _df.eventID == ip1.id)
-    ret_df = ret_df.drop("id").drop("ip1").drop("ip2")
+    ret_df = _df.join(_ip, _df.eventID == _ip.id)
+    ret_df = ret_df.drop("ip1").drop("ip2").drop("ipquery")
     ret_df = ret_df.orderBy("eventID", ascending=True)
     ret_df = ret_df.select("eventID", "timestamp", "user_id", "url", "os", "browser", "country", "city")
 
@@ -188,11 +167,11 @@ def extract(_spark):
     """
     cwd = os.getcwd()
     """ Initial read of the given TSV file """
-    _df = _spark.read.csv(
-        cwd + "/input_data",
-        sep="\t",
-        encoding='utf-8'
-    ).toDF("date", "time", "user_id", "url", "ip", "user_agent_string")
+    _df = _spark.read.option("delimiter", "\t")\
+        .csv(cwd + "/src/data/input_data")\
+        .toDF("date", "time", "user_id", "url", "ip", "user_agent_string")
+
+    _spark.sparkContext.setLogLevel("WARN")
 
     return _df
 
@@ -202,7 +181,7 @@ if __name__ == "__main__":
     warehouse_location = abspath('spark-warehouse')
     spark = SparkSession \
         .builder \
-        .appName("Yieldify Test") \
+        .appName("CitiesCountriesTest") \
         .config("spark.sql.warehouse.dir", warehouse_location) \
         .enableHiveSupport() \
         .getOrCreate()
