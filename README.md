@@ -4,7 +4,7 @@
 
 ![alt text](https://cdna.artstation.com/p/assets/images/images/009/551/700/large/pavel-fedorchuk-geck04.jpg?1519637244)
 
-Garden of Data Creation Kit `(An edit to the famous G.E.C.K in the Bethesda Fallout game series`) is a project tha processes large amounts of data, currently TSV files and performs extraction, transformation and loading (ETL).
+Garden of Data Creation Kit `(An edit to the famous G.E.C.K in the Bethesda Fallout game series`) is a project that processes large amounts of data, currently TSV files and performs extraction, transformation and loading (ETL).
 
 ## Project Design
 
