@@ -41,7 +41,7 @@ The dataset has the (default) values divided by tab in the given dataset provide
 Clone directly from the source code:
 
 ```bash
-git clone https://github.com/Thelin90/PySparkDocker.git
+git clone https://github.com/Thelin90/G.D.C.K.git
 ```
 
 Docker needs to be installed on the machine. It can also run locally without docker.
@@ -49,7 +49,7 @@ Docker needs to be installed on the machine. It can also run locally without doc
 ### Requirements
 
 * Docker environment
-* Python 3.6
+* Python ^3.6.5
 * Java ^8
 * Spark ^2.3.x `(mininum 2.3.0)`
 
@@ -191,6 +191,22 @@ only showing top 5 rows
 
 Spark application ends
 ```
+
+### Spark UI
+
+To see the spark jobs process do the following while running the docker image:
+
+```bash
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' etl-cities-countries
+```
+
+This will give the IP of the docker container, type following in the web browser:
+
+`container-ip:4040`
+
+This will give the following output:
+
+![Screenshot](https://github.com/Thelin90/PySparkDocker/blob/master/images/sparkui.png)
 
 ## License
 
