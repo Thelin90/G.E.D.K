@@ -113,19 +113,6 @@ def transform(_df, _spark):
     """ Adding eventID to the dataframe, so that we can join other dataframes """
     _df = _df.withColumn("eventID", monotonically_increasing_id())
 
-    """ 
-    After inspecting the dataframe, and tsv file, I choose to only use the countries and cities
-    from the ip1 column. And the GeoLiteCity.dat may not be perfect so for this
-    reason and simplicity I will stick to this. I have been trying hard and long 
-    both in Scala and Python to to the conversion, in Scala I used an API but it gave
-    http 503 when I tried doing it with sending the column values to a anonymous udf function. 
-    The udf function does not work for this here either for some reason, so this will have to do for now.
-    Did not manage to get it work with other libraries as well due to sbt problems in scala.
-    So to be able to finish this project I make this decision so I can move on, and show what 
-    I can get things done. Note that I tried really hard and long with the IP conversion, 
-    would love to see a solution in Scala how it is done properly.
-    """
-
     print("Converting IP adress to city and country... ")
     countrycityinfo = udf(ipquery, StringType())
 
