@@ -14,7 +14,7 @@ Note: Do not use `#` for commenting the PR commit message, only use `-`.
 Given example:
 
 ```
-TD-xxxx - G.D.C.K-some-fixes-to-something
+TD-xxxx/G.D.C.K-some-fixes-to-something
 
 - New feature A
   - additional link
