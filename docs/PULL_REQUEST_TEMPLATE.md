@@ -9,8 +9,7 @@ Please read this template to ensure your pull request adheres to the given guide
 
 `NOTE! ACHTUNG!`
 - Search previous suggestions before making a new one, as yours may be a duplicate.
-
-Note: Do not use `#` for commenting the PR commit message, only use `-`.
+- Do not use `#` for commenting the PR commit message, only use `-`.
 
 Given example:
 
