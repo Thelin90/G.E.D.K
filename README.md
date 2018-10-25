@@ -1,7 +1,5 @@
 # Overview
 
-`Note: This project is for Linux environments, specifically Ubuntu`
-
 ![alt text](https://cdna.artstation.com/p/assets/images/images/009/551/700/large/pavel-fedorchuk-geck04.jpg?1519637244)
 
 Garden of Data Creation Kit `(An edit to the famous G.E.C.K in the Bethesda Fallout game series`) is a project that processes large amounts of data, currently TSV files and performs extraction, transformation and loading (ETL).
@@ -241,3 +239,7 @@ SOFTWARE.
 * [Simon Thelin](https://www.linkedin.com/in/simon-thelin-3ba96986/)
 
 [Back To The Top](#read-me-template)
+
+## Trello Feature Board
+
+* [Board](https://trello.com/b/qigu0NnW/gdck)
