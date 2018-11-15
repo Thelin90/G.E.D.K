@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-
-from .fakeSparkSession import PySparkTest
+from .fakesparksession import PySparkTest
 from etl import extract
+
 
 class SimpleTest(PySparkTest):
     """

@@ -1,7 +1,7 @@
-import unittest
 import logging
 from pyspark.sql import SparkSession
 
+import unittest
 
 class PySparkTest(unittest.TestCase):
 
