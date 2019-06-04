@@ -95,7 +95,11 @@ PYSPARK_DRIVER_PYTHON		'path-to-python'
 
 ### Testing
 
-- TODO:
+Run the following command to run tests:
+
+```bash
+python3 -W ignore:ResourceWarning -m unittest test/unittest-etl-process.py
+```
 
 ### Manual Run
 
