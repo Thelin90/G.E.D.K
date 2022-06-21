@@ -1,5 +1,5 @@
 httpagentparser==1.8.1
-numpy==1.15.0
+numpy==1.22.0
 pandas==0.23.4
 py4j==0.10.7
 pygeoip==0.3.2
